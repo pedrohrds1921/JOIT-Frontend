@@ -5,6 +5,7 @@ import { Section } from "../../components/section";
 import { Filter} from "../../components/filter";
 import { Input } from "../../components/input";
 import { Note } from "../../components/note"
+import { Loading } from '../../components/loading/loading';
 import { useNavigate } from 'react-router-dom';
 
 import { useState,useEffect } from 'react';
@@ -19,6 +20,7 @@ const [tags, setTags]= useState([])
 const [tagsSelected, setTagsSelected]= useState([])
 const [search,setSearch]=useState([])
 const [notes,setNotes]=useState([])
+const [load,setLoad]=useState(false)
 const navigate= useNavigate()
 
 function handleTagsSelected(tagName){
@@ -53,6 +55,7 @@ fechTags()
 useEffect(()=>{
 async function fechNotes(){
     const response= await api.get(`/notes?title=${search}&tags=${tagsSelected}`)
+    setLoad(true)
     setNotes(response.data)
 }
 fechNotes()
@@ -102,6 +105,9 @@ fechNotes()
             </Search>
             <Content>
                 <Section title="Minhas notas">
+              {!load &&<Loading/>}
+              {load && notes.length<=0 && <h1>Sem notas</h1>}
+              
                     {
                         notes.map(note=>(
                             <Note 

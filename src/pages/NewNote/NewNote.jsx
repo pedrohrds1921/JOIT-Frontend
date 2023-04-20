@@ -57,20 +57,17 @@ async function handleNewNote(){
     return alert("Para adicionar a link clique no icone de +")
 
   }
-
-
   await api.post("/notes",{
     title,
     description,
     tags,
     links
   })
+  
+
   alert("Nota Criada")
   navigate("/")
 }
-
-
-
 
   return (
     <Container>

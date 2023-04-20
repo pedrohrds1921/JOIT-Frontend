@@ -16,7 +16,9 @@ export const Container = styled.button`
 
 
     &:disabled{
-        opacity:0.5;
+        opacity:0.8;
+        color:${({theme})=>theme.COLORS.GRAY_100};
+        cursor: wait
     }
 
 `

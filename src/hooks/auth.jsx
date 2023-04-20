@@ -15,14 +15,15 @@ function AuthProvider({children}){
             localStorage.setItem("@jotnotes:user",JSON.stringify(user))
             localStorage.setItem("@jotnotes:token",token)
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-
-            setData({user})
+             setData({user})
+             return 
         }catch(erro){
             if(erro.response){
-                setError(erro.response.data.message)
-            }
             
+              return {error:erro.response.data.message}
+            }
         }
+
     }
     function singOut(){
         localStorage.removeItem("@jotnotes:token")
@@ -65,7 +66,7 @@ function AuthProvider({children}){
        }
     },[])
     return(
-        <AuthContext.Provider value={{singIn,user:data.user,error,singOut,updateProfile}}>
+        <AuthContext.Provider value={{singIn,user:data.user,singOut,updateProfile}}>
             {children}
         </AuthContext.Provider>
     )

@@ -4,6 +4,7 @@ import { Input } from "../../components/input";
 import { FiMail, FiLock, FiUser } from "react-icons/fi";
 import { Button } from "../../components/button";
 import { Link } from "react-router-dom";
+import { Loading } from '../../components/loading/loading';
 
 import {api} from "../../services/api";
 
@@ -15,33 +16,44 @@ export function SingUp(){
   const [password,setPassword]=useState("")
   const [response, setResponse] = useState(null);
   const [modalClass, setModalClass] = useState('');
+  const [load,setLoad]=useState(false)
+  const [isrequesting,setIsRequesting]=useState(false)
 
  function handleSignUp(){
+    setIsRequesting(true)
+    setLoad(true)
       if(!name|| !email || !password){
         setResponse("Preencha todos os campos")
         setModalClass('error');
+        setLoad(false)
         setTimeout(() => {
+          setIsRequesting(false)
           setResponse(null);
           setModalClass('')
-        }, 3000)
+        }, 2000)
         return
       }
       api.post("/users",{name,email,password})
       .then(()=> {
           setResponse("Usuario cadastrado ")
           setModalClass('Sucess')
+          setIsRequesting(false)
+          setLoad(false)
           setTimeout(() => {
             setResponse(null);
             setModalClass('')
-          }, 3000)}
+            
+          }, 2000)}
       ).catch(erro=>{
         if(erro.response){
           setResponse(erro.response.data.message)
           setModalClass('error');
+          setIsRequesting(false)
+          setLoad(false)
           setTimeout(() => {
             setResponse(null);
             setModalClass('')
-          }, 3000)
+          }, 2000)
         }else{
           alert("Não foi posssivel realizar o cadastro ")
         }
@@ -93,7 +105,12 @@ export function SingUp(){
                 value={password}
                 onChange={e=>setPassword(e.target.value)}
                 />
-                <Button title="Cadastrar" onClick={handleSignUp}/>
+                <Button 
+                
+                onClick={handleSignUp}
+                disabled={isrequesting} 
+                title={!load ? "Cadastrar":<Loading value={35}/>} 
+                />
                 <Link to="/">Fazer Login</Link>
             </Form>
           </Wapper>

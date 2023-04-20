@@ -5,27 +5,40 @@ import { FiMail, FiLock } from "react-icons/fi";
 import { Button } from "../../components/button";
 import { useAuth } from "../../hooks/auth";
 import { useState,useEffect} from "react";
+import { Loading } from '../../components/loading/loading';
 
 export function SingIn(){
-    const  {singIn, error} = useAuth()
+    const  {singIn} = useAuth()
     const  [email,setEmail]= useState("")
     const  [password,setPassword]= useState("")
     const [displayError, setDisplayError] = useState(false);
+    const [isrequesting,setIsRequesting]=useState(false)
+    let  [msgError,setMsgError]=useState('')
+    const [load,setLoad]=useState(false)
 
-    function handleSinIn(){
-        singIn({email,password})
-        if (error) {
-            setDisplayError(true);
-            setTimeout(() => {
-              setDisplayError(false);
-            }, 3000);
-          }
+ function handleSinIn(){
+    setIsRequesting(true)
+    setLoad(true)
+     singIn({ email, password })
+    .then((res)=>{
+    if(res.error){
+        setMsgError(res.error)
+        setDisplayError(true);
+        setTimeout(() => {
+                setDisplayError(false);
+                setIsRequesting(false)
+                setLoad(false)
+            },2000);
     }
+});
+
+}  
+
     return(
         <Container>
            {displayError&&(
              <Modalerro className="error">
-             <p>{error}</p>
+             <p>{msgError}</p>
           </Modalerro>
            )}
             <Form>
@@ -51,7 +64,11 @@ export function SingIn(){
                 onChange= {e=>setPassword(e.target.value)}
                 value= {password}
                 />
-                <Button title="Entrar" onClick= {handleSinIn} />
+                <Button 
+                disabled={isrequesting} 
+                title={!load ? "Entrar":<Loading value={35}/>} 
+                onClick= {handleSinIn}>
+                </Button>
                 <Link to="/register">Criar conta</Link>
             </Form>
         </Container>

@@ -7,13 +7,14 @@ import { Tag } from "../../components/tag"
 import { ButtonTXT } from "../../components/buttonTXT"
 import { useParams,useNavigate} from "react-router-dom"
 import { useState, useEffect } from "react"
+import { Loading } from '../../components/loading/loading';
 import { api } from "../../services/api"
 
 export function Details() {
   const [data,setData]=useState(null)
   const params= useParams()
   const navigate= useNavigate()
-
+  const [load,setLoad]=useState(false)
 
   function handleBack(){
     navigate(-1)
@@ -30,20 +31,22 @@ async function handleRemove(){
 }
 
 useEffect(()=>{
-  async function fetchnotes(){
-  const response = await api.get(`/notes/${params.id}`)
-  setData(response.data)
-  }
-  fetchnotes()
+async function fetchnotes(){
+    const response = await api.get(`/notes/${params.id}`)
+    setLoad(true)
+    setData(response.data)
+    }
+    fetchnotes()
 },[])
 
   return (
     <Container>
+     
+        {!load &&  <Loading/>}
         <Header/>
         {data &&
           <main>
           <Content>
-           
             <ButtonTXT 
             title="Excluir Nota"
             onClick={()=>{handleRemove()}}
